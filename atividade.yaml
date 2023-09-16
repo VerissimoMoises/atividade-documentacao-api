@@ -1,0 +1,110 @@
+openapi: 3.0.3
+info:
+  title: atividade documentação api
+  description: API da disciplina de lab Web
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: moises.souza6@fatec.sp.gov.br
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/license/LICENSE
+  version: 1.0.0
+externalDocs:
+  url: http://swagger.io
+  description: Additional Docs & Infos
+servers: 
+  - url: https://fatecfranca.com.br/aula
+  - url: https://fatecfranca-stage.com.br/aula
+tags: 
+  - name: order
+    description: Order operations management
+    externalDocs:
+      url: https://swagger.io
+      description: Additional Infos
+
+paths:
+  /orders:
+    get: 
+      tags:
+        - order
+      summary: Get list of orders
+      description: Get list of orders and their respective items
+      operationId: order
+      parameters:
+        - in: query
+          name: type
+          description: Type of order
+          schema: 
+            type: string
+      responses: 
+        '200':
+          description: List of order       
+          content:
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/OrderResponse"
+  /orders/{orderId}:
+    parameters:
+      - name: orderId
+        in: path
+        required: true
+        description: The id of the order 
+       
+        
+components:
+  schemas:
+    OrderResponse:   
+      type: object
+      properties: 
+          uuid:
+            type: string
+            format: uuid
+            description: UUID food created
+          name:
+            type: string
+            description: Name of food
+            example: Coxinha do empresario
+          type: 
+            type: string
+            description: Type of food
+            example: COMIDA
+            enum:
+              - COMIDA
+              - BEBIDA
+              - SOBREMESA
+          value: 
+            type: object
+            properties:
+              promotional: 
+                type: number
+                format: decimal
+                example: 12.99
+                minimum: 0.00
+                maximum: 999.99
+              default:
+                type: number
+                format: decimal
+                example: 15.00
+          specifications:
+            type: array
+            items:
+              type: object
+              properties:
+                name:
+                  type: string
+                  maxLength: 15
+                  example: peso
+                value:
+                  type: string
+                  maxLength: 20
+                  example: 10 kg
+          vigency:
+            type: object 
+            description: Range date time to show food
+            properties:
+              initial: 
+                type: string
+                format: date-time
+              final: 
+                type: string
+                format: date-time
