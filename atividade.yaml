@@ -1,9 +1,10 @@
 openapi: 3.0.3
 info:
-  title: atividade documentação api
-  description: API da disciplina de lab Web
+  title: API MagaJu
+  description: API da empresa MagaJu
   termsOfService: http://swagger.io/terms/
   contact:
+    name: zeisSoft
     email: moises.souza6@fatec.sp.gov.br
   license:
     name: Apache 2.0
@@ -15,9 +16,10 @@ externalDocs:
 servers: 
   - url: https://fatecfranca.com.br/aula
   - url: https://fatecfranca-stage.com.br/aula
+    description: Servidor da Fatec
 tags: 
-  - name: order
-    description: Order operations management
+  - name: Orders
+    description: Management order operations
     externalDocs:
       url: https://swagger.io
       description: Additional Infos
@@ -26,31 +28,285 @@ paths:
   /orders:
     get: 
       tags:
-        - order
+        - Orders
       summary: Get list of orders
       description: Get list of orders and their respective items
-      operationId: order
+      operationId: get.order
       parameters:
         - in: query
           name: type
-          description: Type of order
+          description: 'application/json'
           schema: 
             type: string
+            default: application/json
       responses: 
         '200':
-          description: List of order       
+          description: List of order load successful
           content:
             application/json:
               schema: 
                 $ref: "#/components/schemas/OrderResponse"
-  /orders/{orderId}:
-    parameters:
-      - name: orderId
-        in: path
-        required: true
-        description: The id of the order 
-       
-        
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          
+             
+  /orders/{id}:
+    get: 
+      summary: List orders by identifier
+      description: Returns the order corresponding to the given identifier
+      tags:
+        - Order
+      operationId: get.order.per.orders
+      parameters:
+        - name: id
+          in: path
+          description: ID of order
+          required: true
+          schema: 
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Evento
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/OrderResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /orders/{id}/customers/{id}:
+    get: 
+      summary: List customers by identifier
+      description: Returns the customer corresponding to the given identifier
+      tags:
+        - Customer
+      operationId: get.customers.per.orders
+      parameters:
+        - name: id
+          in: path
+          description: ID of order
+          required: true
+          schema:
+            type: integer
+            default: 1
+        - name: id
+          in: path
+          description: ID of customer
+          required: true
+          schema: 
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Evento
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CustomerResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /orders/{id}/customers/{cpf}:
+    get: 
+      summary: List customers by cpf
+      description: Returns the customer corresponding to the given cpf
+      tags:
+        - Customer
+      operationId: get.customers.per.orders
+      parameters:
+        - name: id
+          in: path
+          description: ID of order
+          required: true
+          schema:
+            type: integer
+            default: 1
+        - name: id
+          in: path
+          description: CPF of customer
+          required: true
+          schema: 
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Evento
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CustomerResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /orders/{status}:
+    get: 
+      summary: List orders by status
+      description: Returns the orders corresponding to the given status
+      tags:
+        - Orders
+      operationId: get.orders
+      parameters:
+        - name: status
+          in: query
+          description: Returns orders with the indicated status
+          required: true
+          schema:
+            type: string
+            example: pago
+      responses:
+        '200':
+          description: Evento
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/OrderResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /orders?start_date=2016-11-15&end_date=2016-11-23:
+    get: 
+      summary: List orders by greater or lesser date
+      description: Returns the orders corresponding to the given greater or lesser date
+      tags:
+        - Orders
+      operationId: get.orders
+      parameters:
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date
+            example: 2023-01-01
+          description: Returns orders with the indicated lesser date
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date
+            example: 2023-12-01
+          description: Returns orders with the indicated greater date
+      responses:
+        '200':
+          description: Evento
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/OrderResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 components:
   schemas:
     OrderResponse:   
@@ -59,52 +315,152 @@ components:
           uuid:
             type: string
             format: uuid
-            description: UUID food created
-          name:
+            description: UUID of order
+          id:
+            type: integer
+            example: 1
+            description: ID of order
+          date: 
             type: string
-            description: Name of food
-            example: Coxinha do empresario
-          type: 
-            type: string
-            description: Type of food
-            example: COMIDA
-            enum:
-              - COMIDA
-              - BEBIDA
-              - SOBREMESA
-          value: 
+            format: date-time
+            example: 2023-01-01 23:30:00.0002
+            description: Date of order
+          customer: 
             type: object
             properties:
-              promotional: 
-                type: number
-                format: decimal
-                example: 12.99
-                minimum: 0.00
-                maximum: 999.99
-              default:
-                type: number
-                format: decimal
-                example: 15.00
-          specifications:
-            type: array
-            items:
-              type: object
-              properties:
-                name:
-                  type: string
-                  maxLength: 15
-                  example: peso
-                value:
-                  type: string
-                  maxLength: 20
-                  example: 10 kg
-          vigency:
-            type: object 
-            description: Range date time to show food
+              uuid:
+                type: string
+                format: uuid
+                description: UUID of customer
+              id: 
+                type: integer
+                example: 1
+                description: ID of customer
+              name:
+                type: string
+                example: Juliana Paes
+                description: Name of customer                
+              cpf: 
+                type: string
+                example: 25637894626
+                description: CPF of customer                
+          status: 
+            type: string
+            description: Type of order
+            example: pago
+            enum:
+              - pago
+              - enviado
+              - aguardando pagamento
+              - cancelado
+          originBranch:
+            type: object
             properties:
-              initial: 
+              uuid:
                 type: string
-                format: date-time
-              final: 
+                format: uuid
+                description: UUID of branch
+              id: 
+                type: integer
+                example: 1
+                description: ID of customer
+              zipCode: 
+                type: integer
+                example: 1658
+                description: ZipCode of customer
+              cep: 
                 type: string
-                format: date-time
+                example: 14404100
+                description: cep of branch                
+          total: 
+            type: object
+            properties:
+              value:
+                type: number
+                format: decimal
+                example: 50.00
+                description: Total amount
+              currency: 
+                type: string
+                example: BRL
+                description: Currency used       
+          itemsOfOrder:   
+            type: object
+            properties: 
+              sequence: 
+                type: integer
+                example: 1
+              product:
+                type: object
+                properties:
+                  id: 
+                    type: integer
+                    example: 1
+                    description: ID of item
+                  description:
+                    type: string
+                    example: Faca que corta
+                    description: Description of item
+                  amount:
+                    type: integer
+                    example: 5
+                    description: Amount of items
+                  unitPrice: 
+                    type: object
+                    properties:
+                      value: 
+                        type: number
+                        format: decimal
+                        example: 10.00
+                        description: Unit price of itens
+                      currency: 
+                        type: string
+                        example: BRL
+                        description: Currency used
+                      totalPrice: 
+                        type: object
+                        properties:
+                          value: 
+                            type: number
+                            format: decimal
+                            example: 50.00
+                            description: Total amount
+                          currency: 
+                            type: string
+                            example: BRL
+                            description: Currency used
+
+    CustomerResponse: 
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          description: UUID of customer
+        id: 
+          type: integer
+          example: 1
+          description: ID of customer
+        name:
+          type: string
+          example: Juliana Paes
+          description: Name of customer                
+        cpf: 
+          type: string
+          example: 25637894626
+          description: CPF of customer   
+      
+    
+    Error:
+      type: object
+      properties:
+        error:
+          type: boolean
+        code:
+          type: integer
+        message:
+          type: string
+      example:
+        error: true
+        code: 1
+        message: Token not found.
